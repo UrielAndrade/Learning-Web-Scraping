@@ -5,11 +5,11 @@ options = Options()
 
 options.binary_location = "/usr/sbin/google-chrome-stable"
 
-# Usa um perfil isolado (o Chrome NÃO vai fechar)
+# perfil isolado (o Chrome NAO vai fechar)
 options.add_argument("--user-data-dir=/tmp/selenium-profile")
 options.add_argument("--profile-directory=Default")
 
-# Flags essenciais no Linux
+# flags do linux
 options.add_argument("--no-sandbox")
 options.add_argument("--disable-dev-shm-usage")
 options.add_argument("--disable-gpu")
