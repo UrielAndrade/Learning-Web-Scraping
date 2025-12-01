@@ -21,16 +21,17 @@ driver.get(url)
 wait = WebDriverWait(driver, 15)
 
 dados = [
-  "//div[contains(@class,'list-item')][./dt[text()='Nome']]/dd",
-  "//div[contains(@class,'list-item')][./dt[text()='Matrícula']]/dd",
-  "//div[contains(@class,'list-item')][./dt[text()='E-mail Acadêmico']]/dd"
+  ("Nome", "//div[contains(@class,'list-item')][./dt[text()='Nome']]/dd"),
+  ("Matricula", "//div[contains(@class,'list-item')][./dt[text()='Matrícula']]/dd",),
+  ("E-mail", "//div[contains(@class,'list-item')][./dt[text()='E-mail Acadêmico']]/dd"),
+  ("CPF", "//div[contains(@class,'list-item')][./dt[text()='CPF']]/dd")
   ]
 
-for dado in dados:
-  elemento = wait.until(
-    EC.presence_of_element_located((By.XPATH, dado)) # By.CSS_SELECTOR - para CSS
+for label, Xpath in dados:
+  dadoBruto = wait.until(
+    EC.presence_of_element_located((By.XPATH, Xpath)) # By.CSS_SELECTOR - para CSS
     )
-  print("Resultado:", elemento.text)
+  print(f"{label}: {dadoBruto.text}")
 
 
 input("Pressione ENTER para fechar...")
