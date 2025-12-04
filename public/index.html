@@ -13,27 +13,32 @@
   async function runPython() {
     const res = await fetch("/run-python");
     const data = await res.text();
-    console.log(data);
+
+    const out = document.getElementById("resultado");
+    out.textContent = data;
+    out.classList.add("updated");
+    setTimeout(() => out.classList.remove("updated"), 400);
   }
 </script>
 
 
 <body>
   <header class="header">
-    <h1>Teste Para Scraping</h1>
+    <h1>Functional SUAP Operation</h1>
   </header>
 
   <section class="container">
     <div class="titulo">
-      <h3><i>Dados Do De Teste</i></h3>
+      <h3><i>Suap Scraping</i></h3>
     </div>
     <div class="dados">
-      <p class="informacao">Nome: <strong>LADESA</strong></p>
+      <p class="informacao">Organização: <strong>LADESA</strong></p>
       <p><i>status:</i> Operante</p>
     </div>
     <div class="botao">
-      <button id="scraping", onclick="runPython()">Executar Scraping no SUAP</button>
+      <button id="scraping" onclick="runPython()">Executar Scraping no SUAP</button>
     </div>
+    <div id="resultado"></div>
   </section>
 
 </body>

@@ -5,7 +5,7 @@ const app = express();
 app.use(express.static("public"));
 
 app.get("/run-python", (req, res) => {
-  exec("python3 V2.0SuapScraping.py", (error, stdout, stderr) => {
+  exec("python3 ./V2.0SuapScaping.py", (error, stdout, stderr) => {
     if (error) {
       console.error(error);
       return res.status(500).send("Erro ao executar o Python");
