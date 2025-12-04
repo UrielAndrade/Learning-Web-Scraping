@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teste Para Scraping</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="script.js"></script>
+</head>
+
+<script>
+  async function runPython() {
+    const res = await fetch("/run-python");
+    const data = await res.text();
+    console.log(data);
+  }
+</script>
+
+
+<body>
+  <header class="header">
+    <h1>Teste Para Scraping</h1>
+  </header>
+
+  <section class="container">
+    <div class="titulo">
+      <h3><i>Dados Do De Teste</i></h3>
+    </div>
+    <div class="dados">
+      <p class="informacao">Nome: <strong>LADESA</strong></p>
+      <p><i>status:</i> Operante</p>
+    </div>
+    <div class="botao">
+      <button id="scraping", onclick="runPython()">Executar Scraping no SUAP</button>
+    </div>
+  </section>
+
+</body>
+
+</html>
