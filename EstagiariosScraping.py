@@ -1,33 +1,31 @@
+import browser_cookie3
 from bs4 import BeautifulSoup
 import csv
 from datetime import datetime
+import requests
+import browser_cookie3
+import requests
 
-arquivo_html = "Estágios - SUAP_ Sistema Unificado de Administração Pública.html"
+# nao precisa para esta página
+matriculaSiap = ""
+cookies = browser_cookie3.chrome(domain_name='suap.ifro.edu.br')
 
-with open(arquivo_html, "r", encoding="utf-8") as f:
-    soup = BeautifulSoup(f.read(), "html.parser")
+session = requests.Session()
+session.cookies.update(cookies)
 
-tabelas = soup.find_all("table")
-print(f"Total de tabelas encontradas: {len(tabelas)}")
+url = f"https://suap.ifro.edu.br/admin/estagios/praticaprofissional/?aluno__situacao=1"
+response = session.get(url)
 
-for i, tb in enumerate(tabelas, 1):
-    print(f"{i}: classes = {tb.get('class')}")
-
-# procurar td -> field-aluno
-tabela = None
-for tb in soup.find_all("table"):
-    if tb.find("td", {"class": "field-aluno"}):
-        tabela = tb
-        break
-
-if not tabela:
-    print("Tabela not found.")
+pageStatusCode = response.status_code
+if pageStatusCode != 200:
+    print("flaha, Status:", pageStatusCode)
     exit()
 
+html = response.text
+soup = BeautifulSoup(html, "html.parser")
 
-estagios = []
-linhas = tabela.find_all("tr")
-campos_td = {
+estagiarios = []
+campos = {
     "Aluno": "field-aluno",
     "Empresa": "field-empresa",
     "Orientador": "field-orientador",
@@ -37,32 +35,18 @@ campos_td = {
     "Campus": "field-get_campus",
 }
 
-for tr in linhas:
-    estagio = {}
-    valido = True
+resultado = {}
 
-    for label, classe in campos_td.items():
-        td = tr.find("td", {"class": classe})
-        if not td:
-            valido = False
-            break
-        estagio[label] = td.get_text(strip=True)
+for label, texto_procurado in campos.items():
+    dt = soup.find("dt", string=lambda s: s and texto_procurado in s)
+    if dt:
+        dd = dt.find_next("dd")
+        if dd:
+            resultado[label] = dd.get_text(strip=True)
+        else:
+            resultado[label] = None
+    else:
+        resultado[label] = None
 
-    if valido:
-        estagios.append(estagio)
-
-# Mostrar
-for i, estagio in enumerate(estagios, 1):
-    print(f"\n--- ESTÁGIO {i} ---")
-    for k, v in estagio.items():
-        print(f"{k}: {v}")
-
-# Exportar CSV
-nome_arquivo = f"estagios_{datetime.now().strftime('%d-%m-%Y_%H-%M-%S')}.csv"
-with open(nome_arquivo, "w", newline="", encoding="utf-8") as csvfile:
-    writer = csv.DictWriter(csvfile, fieldnames=campos_td.keys())
-    writer.writeheader()
-    writer.writerows(estagios)
-
-print(f"\n✓ Exportado: {nome_arquivo}")
-print(f"✓ Total encontrados: {len(estagios)}")
+for k, v in resultado.items():
+    print(f"{k}: {v}")

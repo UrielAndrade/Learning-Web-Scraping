@@ -2,7 +2,7 @@ import browser_cookie3
 import requests
 from bs4 import BeautifulSoup
 
-matriculaSiap = "2024102020050"  
+matriculaSiap = ""
 cookies = browser_cookie3.chrome(domain_name='suap.ifro.edu.br')
 
 session = requests.Session()
