@@ -1,13 +1,7 @@
 import browser_cookie3
 from bs4 import BeautifulSoup
-import csv
-from datetime import datetime
-import requests
-import browser_cookie3
 import requests
 
-# nao precisa para esta página
-matriculaSiap = ""
 cookies = browser_cookie3.chrome(domain_name='suap.ifro.edu.br')
 
 session = requests.Session()
@@ -24,29 +18,24 @@ if pageStatusCode != 200:
 html = response.text
 soup = BeautifulSoup(html, "html.parser")
 
+tabela = soup.find("table", class_="results")
+if not tabela:
+    print("Tabela não encontrada")
+    exit()
+
+def texto(linha, classe):
+    td = linha.find("td", class_=classe)
+    return td.get_text(strip=True) if td else None
+
 estagiarios = []
-campos = {
-    "Aluno": "field-aluno",
-    "Empresa": "field-empresa",
-    "Orientador": "field-orientador",
-    "Data Início": "field-data_inicio",
-    "Data Prevista Fim": "field-data_prevista_fim",
-    "Data Fim": "field-data_fim",
-    "Campus": "field-get_campus",
-}
-
-resultado = {}
-
-for label, texto_procurado in campos.items():
-    dt = soup.find("dt", string=lambda s: s and texto_procurado in s)
-    if dt:
-        dd = dt.find_next("dd")
-        if dd:
-            resultado[label] = dd.get_text(strip=True)
-        else:
-            resultado[label] = None
-    else:
-        resultado[label] = None
-
-for k, v in resultado.items():
-    print(f"{k}: {v}")
+for linha in tabela.select("tbody tr"):
+    estagiarios.append({
+        "Aluno": texto(linha, "field-aluno"),
+        "Empresa": texto(linha, "field-empresa"),
+        "Orientador": texto(linha, "field-orientador"),
+        "Data Início": texto(linha, "field-data_inicio"),
+        "Data Prevista Fim": texto(linha, "field-data_prevista_fim"),
+        "Data Fim": texto(linha, "field-data_fim"),
+        "Campus": texto(linha, "field-get_campus"),
+    })
+    print(len(estagiarios))
